@@ -1486,8 +1486,7 @@ class DefaultRecord extends AbstractBase
                 . 'xmlns:oai_qdc="http://worldcat.org/xmlschemas/qdc-1.0/" '
                 . 'xmlns:dcterms="' . $qdc . '" 
                 . 'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '
-                . 'xsi:schemaLocation="http://dublincore.org/schemas/xmls/qdc/2008/02/11/qualifieddc.xsd" '
-                . 'http://www.openarchives.org/OAI/2.0/oai_dc.xsd" />'
+                . 'xsi:schemaLocation="http://dublincore.org/schemas/xmls/qdc/2008/02/11/qualifieddc.xsd" />'
             );
             $xml->addChild('title', htmlspecialchars($this->getTitle()), $dc);
             $authors = $this->getDeduplicatedAuthors();
