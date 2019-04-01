@@ -1478,6 +1478,45 @@ class DefaultRecord extends AbstractBase
 
             return $xml->asXml();
         }
+         // For OAI-PMH Qualified Dublin Core, produce the necessary XML:
+        if ($format == 'oai_qdc') {
+            $qdc = 'http://purl.org/dc/terms/';
+            $xml = new \SimpleXMLElement(
+                '<oai_qdc:qualifieddc '
+                . 'xmlns:oai_qdc="http://worldcat.org/xmlschemas/qdc-1.0/" '
+                . 'xmlns:dcterms="' . $qdc . '" 
+                . 'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '
+                . 'xsi:schemaLocation="http://worldcat.org/xmlschemas/qdc-1.0/ http://worldcat.org/xmlschemas/qdc/1.0/qdc-1.0.xsd http://purl.org/net/oclcterms http://worldcat.org/xmlschemas/oclcterms/1.4/oclcterms-1.4.xsd" '
+                . 'http://www.openarchives.org/OAI/2.0/oai_dc.xsd" />'
+            );
+            $xml->addChild('title', htmlspecialchars($this->getTitle()), $dc);
+            $authors = $this->getDeduplicatedAuthors();
+            foreach ($authors as $list) {
+                foreach (array_keys($list) as $author) {
+                    $xml->addChild('creator', htmlspecialchars($author), $dc);
+                }
+            }
+            foreach ($this->getLanguages() as $lang) {
+                $xml->addChild('language', htmlspecialchars($lang), $dc);
+            }
+            foreach ($this->getPublishers() as $pub) {
+                $xml->addChild('publisher', htmlspecialchars($pub), $dc);
+            }
+            foreach ($this->getPublicationDates() as $date) {
+                $xml->addChild('date', htmlspecialchars($date), $dc);
+            }
+            foreach ($this->getAllSubjectHeadings() as $subj) {
+                $xml->addChild(
+                    'subject', htmlspecialchars(implode(' -- ', $subj)), $dc
+                );
+            }
+            if (null !== $baseUrl && null !== $recordLink) {
+                $url = $baseUrl . $recordLink->getUrl($this);
+                $xml->addChild('identifier', $url, $dc);
+            }
+
+            return $xml->asXml();
+        }
 
         // Unsupported format:
         return false;
